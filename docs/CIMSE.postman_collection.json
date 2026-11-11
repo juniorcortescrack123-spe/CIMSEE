@@ -1,0 +1,1547 @@
+{
+  "info": {
+    "name": "CIMSE - Sprints 1, 2 y 3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Primero ejecute 'Login (guarda el token)'. Usuario admin, clave 123456. Backend en http://localhost:8080."
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Login (guarda el token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/auth/login",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"123456\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.token) { pm.collectionVariables.set('token', r.token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login con clave incorrecta (debe dar 401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/auth/login",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"incorrecta\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Recuperar contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/auth/recuperar",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "recuperar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"supervisor1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Mi perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/me",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "me"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sin token (debe dar 401)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/seguridad/roles",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "seguridad",
+                "roles"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seguridad (Sprint 1)",
+      "item": [
+        {
+          "name": "Listar roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/seguridad/roles",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "seguridad",
+                "roles"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear rol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/seguridad/roles",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "seguridad",
+                "roles"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"ASISTENTE\",\n  \"descripcion\": \"Apoya al administrador\",\n  \"permisos\": [\n    \"PAGOS\"\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/seguridad/usuarios",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "seguridad",
+                "usuarios"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Empleados sin usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/seguridad/empleados-disponibles",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "seguridad",
+                "empleados-disponibles"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/seguridad/usuarios",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "seguridad",
+                "usuarios"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEmpleado\": 5,\n  \"rol\": \"SUPERVISOR\",\n  \"clave\": \"Cimse2026\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Auditoría",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/seguridad/auditoria?limite=50",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "seguridad",
+                "auditoria?limite=50"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comercial (Sprint 2)",
+      "item": [
+        {
+          "name": "Registrar cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/clientes/registrar",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "registrar"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Farmacia Central\",\n  \"rtn\": \"08011999000055\",\n  \"contacto\": \"Maria Lopez\",\n  \"telefono\": \"2233-4455\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/clientes",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "clientes"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle del cliente 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/clientes/1/detalle",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "1",
+                "detalle"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar contrato",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/contratos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "contratos"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCliente\": 1,\n  \"fechaInicio\": \"2026-11-01\",\n  \"fechaVencimiento\": \"2027-11-01\",\n  \"montoMensual\": \"50000\",\n  \"diaPago\": 15,\n  \"cai\": \"CAI-0100\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar contratos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/contratos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "contratos"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Alertas a 30 días",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/contratos/alertas?dias=30",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "contratos",
+                "alertas?dias=30"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Renovar contrato 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/contratos/1/renovar",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "contratos",
+                "1",
+                "renovar"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaVencimiento\": \"2028-01-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar puesto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/puestos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "puestos"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCliente\": 1,\n  \"descripcion\": \"Entrada trasera\",\n  \"ubicacion\": \"Agencia Centro\",\n  \"tipoTurno\": \"12h\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar puestos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/puestos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "puestos"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cadena relacional",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/comercial/cadena",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "comercial",
+                "cadena"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operaciones (Sprint 2)",
+      "item": [
+        {
+          "name": "Listar turnos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/turnos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "turnos"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar horario del turno 1",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/turnos/1",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "1"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"horaInicio\": \"06:00\",\n  \"horaFin\": \"14:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Guardias disponibles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/asignaciones/guardias",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "asignaciones",
+                "guardias"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Asignar guardia a puesto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/asignaciones",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "asignaciones"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEmpleado\": 5,\n  \"idPuesto\": 2,\n  \"idTurno\": 2,\n  \"fechaInicio\": \"2026-11-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Asignar el mismo turno con fechas cruzadas (debe dar 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/asignaciones",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "asignaciones"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEmpleado\": 5,\n  \"idPuesto\": 2,\n  \"idTurno\": 2,\n  \"fechaInicio\": \"2026-11-15\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar asignaciones activas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/api/asignaciones?estado=ACTIVA",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "asignaciones?estado=ACTIVA"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operaciones (Sprint 3)",
+      "item": [
+        {
+          "name": "Listar supervisiones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/supervisiones",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "supervisiones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar supervision con guardia ausente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/supervisiones",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "supervisiones"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idSupervisor\": 4,\n  \"idAsignacionPuesto\": 1,\n  \"guardiaPresente\": false,\n  \"firmaLibro\": true,\n  \"observaciones\": \"No se encontro al guardia\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar incidencias",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/incidencias",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "incidencias"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar incidencia",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/incidencias",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "incidencias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEmpleadoReporte\": 4,\n  \"idPuesto\": 1,\n  \"tipo\": \"PROBLEMA_CLIENTE\",\n  \"descripcion\": \"El cliente reporta demora en el relevo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Avanzar estado de la incidencia 1",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/incidencias/1/estado",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "incidencias",
+                "1",
+                "estado"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"EN_PROCESO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Solicitar guardia comodin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/incidencias/1/comodin",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "incidencias",
+                "1",
+                "comodin"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEmpleadoReemplazo\": 6\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventario y Equipos (Sprint 3)",
+      "item": [
+        {
+          "name": "Listar activos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/activos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "activos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Compras disponibles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/activos/compras",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "activos",
+                "compras"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar arma",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/activos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "activos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"ARMA\",\n  \"idCompra\": 1,\n  \"descripcion\": \"Pistola 9mm nueva\",\n  \"numeroSerie\": \"SN-900001\",\n  \"marca\": \"Glock\",\n  \"modelo\": \"19\",\n  \"calibre\": \"9mm\",\n  \"tipoArma\": \"PISTOLA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar arma con serie repetida (debe dar 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/activos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "activos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"ARMA\",\n  \"idCompra\": 1,\n  \"descripcion\": \"Duplicada\",\n  \"numeroSerie\": \"SN-000123\",\n  \"marca\": \"Glock\",\n  \"tipoArma\": \"PISTOLA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar vehiculo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/activos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "activos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"VEHICULO\",\n  \"idCompra\": 4,\n  \"descripcion\": \"Motocicleta de patrullaje\",\n  \"placa\": \"MOT-5566\",\n  \"tipoVehiculo\": \"MOTOCICLETA\",\n  \"marca\": \"Honda\",\n  \"kilometraje\": \"1200\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Detalle del activo 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/activos/1",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "activos",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Activos disponibles para entregar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/equipos/disponibles",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "equipos",
+                "disponibles"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Entregar equipo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/equipos/asignaciones",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "equipos",
+                "asignaciones"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEmpleado\": 6,\n  \"idActivo\": 2,\n  \"estadoEntrega\": \"BUENO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Devolver equipo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/equipos/asignaciones/1/devolver",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "equipos",
+                "asignaciones",
+                "1",
+                "devolver"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estadoDevolucion\": \"BUENO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Acta digital",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/equipos/asignaciones/1/acta",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "equipos",
+                "asignaciones",
+                "1",
+                "acta"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Movimientos de inventario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base}}/api/activos/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "api",
+                "activos",
+                "movimientos"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}

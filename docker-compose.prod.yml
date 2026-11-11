@@ -1,0 +1,62 @@
+# Despliegue en la nube (servidor con Docker). Uso:
+#   1) copie .env.example como .env y cambie TODAS las contrasenas y APP_URL
+#   2) docker compose -f docker-compose.prod.yml up -d --build
+# Solo se publica el puerto 80; la base de datos y la API quedan dentro de la red interna de Docker.
+services:
+  db:
+    image: postgres:16
+    container_name: cimse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cimse
+      POSTGRES_USER: ${DB_USER:-cimse_user}
+      POSTGRES_PASSWORD: ${DB_PASS:?Defina DB_PASS en el archivo .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-cimse_user} -d cimse"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 180s
+
+  backend:
+    build: ./backend
+    container_name: cimse-backend
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/cimse
+      DB_USER: ${DB_USER:-cimse_user}
+      DB_PASS: ${DB_PASS:?Defina DB_PASS en el archivo .env}
+      CIMSE_STORAGE_DIR: /data/uploads
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      APP_URL: ${APP_URL:-http://localhost}
+      CLAVE_DIAS_VIGENCIA: ${CLAVE_DIAS_VIGENCIA:-3}
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_URL: /api
+    container_name: cimse-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  uploads:

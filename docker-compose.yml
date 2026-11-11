@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:16
+    container_name: cimse-db
+    environment:
+      POSTGRES_DB: cimse
+      POSTGRES_USER: cimse_user
+      POSTGRES_PASSWORD: cimse_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      # -h 127.0.0.1: durante la carga inicial Postgres solo escucha por socket interno; asi no se avisa "listo" antes de tiempo
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U cimse_user -d cimse"]
+      interval: 5s
+      timeout: 5s
+      retries: 60          # en equipos lentos la primera carga de la base tarda varios minutos
+      start_period: 180s
+
+  backend:
+    build: ./backend
+    container_name: cimse-backend
+    restart: on-failure
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/cimse
+      DB_USER: cimse_user
+      DB_PASS: cimse_pass
+      # contratos escaneados (PDF): carpeta fija del servidor, guardada en un volumen
+      CIMSE_STORAGE_DIR: /data/uploads
+      # correo para enviar las claves temporales (se configura en el archivo .env, ver .env.example)
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      APP_URL: ${APP_URL:-http://localhost:5173}
+      CLAVE_DIAS_VIGENCIA: ${CLAVE_DIAS_VIGENCIA:-3}
+    volumes:
+      - uploads:/data/uploads
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: cimse-frontend
+    environment:
+      VITE_API_URL: http://localhost:8080/api
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  uploads:
